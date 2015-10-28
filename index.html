@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Functional Rendering in React</title>
+
+		<base target="_blank">
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/sky.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+<section data-markdown>
+# Functional Rendering
+## in React
+</section>
+
+<section>
+<section data-markdown>
+# Summary
+</section>
+<section data-markdown>
+## WebGL API
+### hybrid paradigms
+
+WebGL is a very low level **imperative** API...
+but fundamentally uses **functional** bricks.
+</section>
+<section data-markdown>
+## fragment shader
+
+How to draw things in WebGL.
+
+### *"Functional Rendering"*
+</section>
+<section data-markdown><script type="text/template">
+### gl-react
+
+**a wrapper that hides WebGL complexity.**
+
+like how React hides the stateful imperative DOM API
+
+**Our current focus: making (2D) effects.**
+
+```html
+<Blur>
+  <NegativeColor>
+    <video ... />
+  </NegativeColor>
+</Blur>
+```
+
+WebGL as easy as composing React components.
+</script></section>
+<section data-markdown>
+### gl-react-native
+
+The same wrapper on top of **OpenGL** for React Native.
+
+write universal effects for both the Web and the Native.
+</section>
+</section>
+
+
+<section>
+<section data-markdown>
+# WebGL
+</section>
+
+<section data-markdown><script type="text/template">
+![](./images/1z2dMAE.png)
+<!-- .element: style="border:0;background:transparent;box-shadow:none" height="600" -->
+</script></section>
+
+<section data-markdown><script type="text/template">
+### **WebGL** is a lot of things
+
+we can focus on 2D effects with 2 triangles that fits viewport
+
+![](./images/uphfojW.png)
+<!-- .element: style="border:0;background:transparent;box-shadow:none" -->
+</script></section>
+</section>
+
+<section>
+<section data-markdown>
+Let's take a complex WebGL example...
+
+## [behind-asteroids](https://github.com/gre/behind-asteroids)
+
+a game I've made for JS13K
+</section>
+
+<section data-markdown>
+WebGL API is about building a graphics pipeline...
+
+in an **imperative and stateful way**.
+
+[CODE](https://github.com/gre/behind-asteroids/blob/master/src/effects.js)
+</section>
+
+<section data-markdown>
+But basically it's just this graph:
+![](./images/ZQwHb4E.png)
+
+*where each block is just a function!*
+</section>
+</section>
+
+<section>
+<section data-markdown>
+## Fragment Shader
+
+Each pipeline brick is a function from pixels to colors...
+
+## `{x,y} => {r,g,b,a}`
+
+...implemented in a **Fragment Shader**.
+</section>
+
+<section data-markdown>
+I like to call this...
+
+### [**functional rendering**](http://greweb.me/2013/11/functional-rendering/).
+
+**Let's see how to draw in this paradigm...**
+</section>
+
+<section data-markdown><script type="text/template">
+## Hello GL
+
+Simple Fragment Shader in **GLSL** language.
+
+```glsl
+precision highp float;
+varying vec2 uv;
+
+void main () {
+  gl_FragColor = vec4(uv.x, uv.y, 0.5, 1.0);
+}
+```
+
+![](./images/432492c6-475c-11e5-9328-f3d5187298c1.jpg)
+ <!-- .element: class="fragment" height="300" -->
+</script></section>
+
+<section data-markdown>
+### The only limit of Functional Rendering is your imagination
+
+## `{x,y} => {r,g,b,a}`
+
+This paradigm is low-level but extremely powerful:
+- **limitless** (not restricted to primitives)
+- **vectorial** by design (renders at any dimension)
+- **efficient** because scalable (with GPU units)
+
+> See [shadertoy.com](http://shadertoy.com/) for more demos
+</section>
+
+<section data-markdown><script type="text/template">
+### "**Uniforms**" ...
+
+...are variables from JavaScript world.
+
+```glsl
+precision highp float;
+varying vec2 uv;
+uniform float blue;
+
+void main () {
+  gl_FragColor = vec4(uv.x, uv.y, blue, 1.0);
+}
+```
+
+![](./images/DXZVRfZ.gif)
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Circle Hello GL
+
+```glsl
+precision highp float;
+varying vec2 uv;
+uniform float blue;
+
+void main () {
+  gl_FragColor = mix(
+    vec4(uv.x, uv.y, blue, 1.0),
+    vec4(0.0),
+    step(0.5, distance(uv, vec2(0.5, 0.5))));
+}
+```
+
+![](./images/XzixCuO.png)
+<!-- .element: height="280" -->
+</script></section>
+
+<section data-markdown><script type="text/template">
+## [Squircle](https://en.wikipedia.org/wiki/Squircle) Hello GL
+
+```glsl
+precision highp float;
+varying vec2 uv;
+uniform float blue;
+float squircle (vec2 a, vec2 b, float n) {
+  return pow(pow(abs(a.x-b.x), n) + pow(abs(a.y-b.y), n), 1.0 / n);
+}
+void main () {
+  gl_FragColor = mix(
+    vec4(uv.x, uv.y, blue, 1.0),
+    vec4(0.0),
+    step(0.5, squircle(uv, vec2(0.5, 0.5), 4.0)));
+}
+```
+
+![](./images/5OwAMV8.png)
+<!-- .element: height="250" -->
+</script></section>
+
+<section data-markdown><script type="text/template">
+## [Squircle](https://en.wikipedia.org/wiki/Squircle) Crop
+
+```glsl
+precision highp float;
+varying vec2 uv;
+uniform sampler2D texture;
+float squircle (vec2 a, vec2 b, float n) {
+  return pow(pow(abs(a.x-b.x), n) + pow(abs(a.y-b.y), n), 1.0 / n);
+}
+void main () {
+  gl_FragColor = mix(
+    texture2D(texture, uv),
+    vec4(0.0),
+    step(0.5, squircle(uv, vec2(0.5, 0.5), 4.0)));
+}
+```
+
+![](./images/4QBihPx.png)
+<!-- .element: height="250" -->
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Composition
+
+pipes **HelloGL** into **SquircleCrop**
+
+![](./images/e0Pcz10.png)
+<!-- .element: height="250" -->
+
+if translated into JSX tree...
+<!-- .element: class="fragment" -->
+
+```html
+<SquircleCrop>
+  <HelloGL blue={0.5} />
+</SquircleCrop>
+```
+<!-- .element: class="fragment" -->
+</script></section>
+</section>
+
+<section data-markdown><script type="text/template">
+### Imperative → Functional
+
+- **DOM → Virtual DOM**
+- **WebGL → Virtual GL**
+
+
+> <!-- .element: class="fragment" --> The same way we moved from DOM to VDOM with `react`,
+We can move from boring WebGL setup code to a productive,
+descriptive and functional abstraction,
+**without hiding the underneath technology**.
+
+</script></section>
+
+
+<section>
+<section data-markdown>
+### Introducing gl-react
+
+WebGL bindings for react to implement complex effects over content.
+</section>
+
+<section data-markdown><script type="text/template">
+### gl-react API CheatSheet
+
+- `GL.Shaders.create({ foo: {frag:"..."} })`
+<!-- .element: class="fragment" -->
+
+- `<GL.View shader={..} uniforms={{..}} .../>`
+<!-- .element: class="fragment" -->
+
+- `GL.createComponent(props => glViewOrComp)`
+<!-- .element: class="fragment" -->
+
+</script></section>
+</section>
+
+<section>
+<section data-markdown><script type="text/template">
+### Simple examples
+</script></section>
+
+<section data-markdown><script type="text/template">
+### Hello GL
+
+import libraries...
+
+```js
+const React = require("react");
+const GL = require("gl-react");
+```
+ <!-- .element: class="fragment" -->
+
+create a shader...
+
+```glsl
+const shaders = GL.Shaders.create({
+  helloGL: {
+    frag: `
+precision highp float;
+varying vec2 uv;
+uniform float blue;
+void main () {
+  gl_FragColor = vec4(uv.x, uv.y, blue, 1.0);
+}`
+  }
+});
+```
+ <!-- .element: class="fragment" -->
+</script></section>
+
+<section data-markdown><script type="text/template">
+### Hello GL
+
+create a component...
+```js
+const HelloGL = GL.createComponent(
+ ({ width, height, blue }) =>
+ <GL.View
+ shader={shaders.helloGL}
+ width={width}
+ height={height}
+ uniforms={{ blue }}
+ />);
+```
+<!-- .element: class="fragment" -->
+
+use it...
+```html
+<HelloGL blue={0.5} />
+```
+<!-- .element: class="fragment" -->
+
+![](./images/432492c6-475c-11e5-9328-f3d5187298c1.jpg)
+ <!-- .element: class="fragment" height="200" -->
+</script></section>
+
+<section data-markdown><script type="text/template">
+### More complex component
+
+that **blends 2 textures**.
+
+```glsl
+const shaders = GL.Shaders.create({
+  add: {
+    frag: `
+precision highp float;
+varying vec2 uv;
+uniform sampler2D t1, t2;
+void main () {
+  gl_FragColor = texture2D(t1, uv) + texture2D(t2, uv);
+}`
+  }
+});
+```
+ <!-- .element: class="fragment" -->
+
+```js
+module.exports = GL.createComponent(
+  ({ children: [ t1, t2 ], ...rest }) =>
+  <GL.View
+	{...rest}
+	shader={shaders.add}
+	uniforms={{ t1, t2 }}
+  />,
+  { displayName: "Add" });
+```
+ <!-- .element: class="fragment" -->
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+```html
+<Add>
+  {"http://i.imgur.com/0bUSEBX.jpg"}
+  {"http://i.imgur.com/G2Whuq3.jpg"}
+</Add>
+```
+
+![](./images/XEVTS5H.png)
+
+</script></section>
+</section>
+
+<section>
+<section data-markdown>
+## Blur Example
+</section>
+
+<section data-markdown><script type="text/template">
+### How to make Blur
+
+**Fast blur:** multiple passes of linear blur on different direction *(e.g XBlur + YBlur)*.
+
+**one pass / linear blur:** mix texture lookups on one axis.
+*Can use interpolation by computing in a smaller size.*
+
+See [`glsl-fast-gaussian-blur`](https://github.com/Jam3/glsl-fast-gaussian-blur).
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+```glsl
+const shaders = GL.Shaders.create({
+  blur1D: {
+    frag: `
+precision highp float;
+varying vec2 uv;
+uniform sampler2D t;
+uniform vec2 resolution;
+uniform vec2 direction;
+
+vec4 blur9(sampler2D image, vec2 uv, vec2 resolution, vec2 direction) {
+  vec4 color = vec4(0.0);
+  vec2 off1 = vec2(1.3846153846) * direction;
+  vec2 off2 = vec2(3.2307692308) * direction;
+  color += texture2D(image, uv) * 0.2270270270;
+  color += texture2D(image, uv + (off1 / resolution)) * 0.3162162162;
+  color += texture2D(image, uv - (off1 / resolution)) * 0.3162162162;
+  color += texture2D(image, uv + (off2 / resolution)) * 0.0702702703;
+  color += texture2D(image, uv - (off2 / resolution)) * 0.0702702703;
+  return color;
+}
+
+void main () {
+  gl_FragColor = blur9(t, uv, resolution, direction);
+}
+    `
+  }
+});
+```
+
+```js
+const Blur1D = GL.createComponent(
+  ({ width, height, direction, children: t, ...rest }) =>
+	<GL.View {...rest}
+	shader={shaders.blur1D}
+	width={width} height={height}
+	uniforms={{ direction, resolution: [ width, height ], t }} />);
+```
+<!-- .element: class="fragment" -->
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+```html
+<Blur1D direction={[ 10, 0 ]} width={width} height={height}>
+	http://i.imgur.com/wExWY7v.jpg
+</Blur1D>
+```
+
+![](./images/Vf4hHui.png)
+
+</script></section>
+<section data-markdown><script type="text/template">
+
+```html
+<Blur1D direction={[ 10, 0 ]} width={width} height={height}>
+	<Blur1D direction={[ 0, 10 ]} width={width} height={height}>
+		http://i.imgur.com/wExWY7v.jpg
+	</Blur1D>
+</Blur1D>
+```
+
+![](./images/I6Zwb9Z.png)
+</script></section>
+
+<section data-markdown><script type="text/template">
+We can generalize usage of `Blur1D` to N passes:
+
+```js
+const Blur = GL.createComponent(
+({ factor, children, passes, ...rest }) => {
+  const rec = p => p <= 0 ? children :
+  <Blur1D {...rest} direction={directionForPass(p, factor, passes)}>
+    {rec(p-1)}
+  </Blur1D>;
+  return rec(passes);
+})
+```
+
+```js
+// one possible implementation of directionForPass...
+const NORM = Math.sqrt(2)/2;
+function directionForPass (p, factor, total) {
+  const f = factor * 2 * Math.ceil(p / 2) / total;
+  switch ((p-1) % 4) {
+  case 0: return [f,0];
+  case 1: return [0,f];
+  case 2: return [f*NORM,f*NORM];
+  case 3: return [f*NORM,-f*NORM];
+  }
+}
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+```html
+<Blur factor={10} passes={4} width={width} height={height}>
+  http://i.imgur.com/wExWY7v.jpg
+</Blur>
+```
+
+![](./images/P1ACHkb.png)
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+```html
+<Blur width={width} height={height} passes={blurPasses} factor={blur} eventsThrough visibleContent autoRedraw>
+  <HueRotate hue={hue}>
+    <video autoPlay loop>
+      <source type="video/mp4" src="video.mp4" />
+    </video>
+  </HueRotate>
+</Blur>
+```
+
+### [See in action](http://projectseptemberinc.github.io/gl-react/Examples/VideoBlur/)
+</script></section>
+
+<section data-markdown><script type="text/template">
+## More advanced Blur
+
+![](./images/ny-blur.png)
+</script></section>
+
+<section data-markdown><script type="text/template">
+## How it works
+
+Blur intensity depends on position.
+
+![](./images/ny-blur-graph.png)
+
+with a new **`map`** texture uniform.
+</script></section>
+
+<section data-markdown><script type="text/template">
+### Addition in the Shader
+
+```glsl
+const shaders = GL.Shaders.create({
+  blur1D: {
+    frag: `
+...
+uniform sampler2D map;
+...
+
+void main () {
+  float intensity = texture2D(map, uv).r;
+  gl_FragColor = blur9(t, uv, resolution, intensity * direction);
+}
+    `
+  }
+});
+```
+
+```html
+<BlurWithMap factor={4} passes={6} width={width} height={height}
+	map="http://i.imgur.com/wh0On3P.png">
+  http://i.imgur.com/NjbLHx2.jpg
+</BlurWithMap>
+```
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+### Procedurally generated
+
+The Blur **`map`** can also be procedurally generated.
+
+
+```html
+<BlurWithMap factor={4} passes={6} width={width} height={height}
+	map={<WeirdGradient />}>
+  http://i.imgur.com/NjbLHx2.jpg
+</BlurWithMap>
+```
+
+![](./images/ny-blur2.png)
+<!-- .element: height="400" -->
+</script></section>
+
+<section data-markdown><script type="text/template">
+### Weird Gradient
+
+```glsl
+precision highp float;
+varying vec2 uv;
+void main () {
+  gl_FragColor = vec4(vec3(
+    0.5 + 0.5 * sin(uv.y * 10.0) * cos(uv.x * 10.0)
+  ), 1.0);
+}
+```
+
+![](./images/ny-blur2-graph.png)
+<!-- .element: height="400" -->
+</script></section>
+
+</section>
+
+<section>
+<section data-markdown>
+	## Shared node optimization
+</section>
+<section data-markdown><script type="text/template">
+### Duplicate nodes
+
+```html
+<Add>
+	<HelloGL blue={0.5} />
+	<HelloGL blue={0.5} />
+</Add>
+```
+
+![](./images/gpip6Ya.png)
+</script></section>
+
+<section data-markdown><script type="text/template">
+### Shared node
+
+```html
+const helloGL = <HelloGL blue={0.5} />;
+
+<Add width={w} height={h}>
+	{helloGL}
+	{helloGL}
+</Add>
+```
+
+factorizing the render tree minimizes the render cost.
+
+![](./images/7EkBzf4.png)
+<!-- .element: height="200" -->
+
+*(Most of the time, you don't have to use a variable, see in previous advanced blur example.)*
+</script></section>
+
+<section data-markdown><script type="text/template">
+### How it works
+
+**Referencial transparency of VDOM elements**:
+If the reference of a VDOM element is found multiple time in the tree,
+algorithm factorizes it to **render it once**.
+
+> This optimization is not built-in in React because it wouldn't make sense for DOM,
+but in WebGL context, **factorizing 2 branchs of the tree saves extra rendering**.
+
+**WYSIWYG**
+</script></section>
+</section>
+
+<section>
+<section data-markdown>
+## More features
+</section>
+<section data-markdown><script type="text/template">
+### GL.View props
+
+`GL.View` have a few other props to fit more use-cases.
+
+`opaque preload onLoad onProgress autoRedraw eventsThrough visibleContent`
+<!-- .element: style="font-size: 0.6em; margin: 4em 0; display: block" -->
+
+### [documentation](https://projectseptemberinc.gitbooks.io/gl-react/content/docs/api/View.html)
+
+</script></section>
+<section data-markdown>
+### Capturing a frame
+
+Via a *ref* you can `captureFrame()` to get an image out of the canvas.
+</section>
+<section data-markdown>
+### `ndarray` support
+
+**ndarray** is a library to define multi-dimensional arrays, like textures.
+
+You can programmatically generate a Texture in JavaScript to use in `gl-react`.
+
+![](./images/9.gif)
+</section>
+</section>
+
+<section>
+<section data-markdown><script type="text/template">
+## gl-react-native
+
+iOS implementation uses **OpenGL ES**.
+a single shared OpenGL context is used for better performance.
+
+To<!-- .element: class="fragment" -->
+factorize `gl-react` features,
+most of the work is done in a shared library called `gl-react-core`.
+
+<!-- `gl-react` and `gl-react-native` depends on it and implement the plateform specifics. -->
+</script></section>
+
+<section data-markdown><script type="text/template">
+![](images/advancedeffects.gif)
+<!-- .element: height="500" -->
+
+A crazy demo that runs at 60 FPS (tested on iPhone 6).
+</script></section>
+
+<section data-markdown><script type="text/template">
+### Effect on texts !
+
+![](./images/3.gif)
+</script></section>
+
+<section data-markdown><script type="text/template">
+### Effect over UI !
+
+![](./images/8.gif)
+
+We can **rasterize native views to texture**.
+
+*Too bad we can't do this with DOM...*
+</script></section>
+
+<section data-markdown><script type="text/template">
+### Complex UI
+
+![](./images/4.gif)
+
+![](./images/5.gif)
+</script></section>
+
+</section>
+
+<section>
+<section data-markdown><script type="text/template">
+## Future direction
+</script></section>
+<section data-markdown><script type="text/template">
+### Better API
+
+split `GL.View` into **`GL.Surface`** and **`GL.Node`**.
+
+- better **separation of concerns**, currently you are forced to put uniforms in the top level `GL.View`.
+- once React Native depends on React, we can make `gl-react` abstract so you can **write universal effects more easily**.
+</script></section>
+<section data-markdown><script type="text/template">
+### [Android implementation](https://github.com/ProjectSeptemberInc/gl-react-native/issues/8)
+</script></section>
+<section data-markdown><script type="text/template">
+### Better tooling
+
+Currently working on **`gl-react-inspector`**.
+</script></section>
+<section data-markdown><script type="text/template">
+### More features
+
+see issues created on:
+
+- [github:ProjectSeptemberInc/gl-react](https://github.com/ProjectSeptemberInc/gl-react)
+- [github:ProjectSeptemberInc/gl-react-native](https://github.com/ProjectSeptemberInc/gl-react-native)
+</script></section>
+<section data-markdown><script type="text/template">
+### More Advanced usages ?
+
+We focused on 2D effects with hardcoded *Vertex Shader*.
+
+We can try to be more generic, but this involves a bit of work especially for the React Native implementation.
+
+For more advanced use-cases like 3D models, we recommend to directly use the OpenGL / WebGL API.
+</script></section>
+</section>
+
+<section data-markdown><script type="text/template">
+## [DEMOS](http://projectseptemberinc.github.io/gl-react/)
+</script></section>
+
+<section data-markdown><script type="text/template">
+## [`gl-react-inspector` experiments](http://greweb.me/gl-react-inspector-examples/)
+</script></section>
+
+<section data-markdown><script type="text/template">
+## [@greweb](https://twitter.com/greweb)
+
+# THA ![](./images/92oymNde_400x400.jpg)<!-- .element: style="height:300px; vertical-align: middle" --> NKS
+
+working at [Project September](https://twitter.com/ProjSeptEng)
+</script></section>
+
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+				fragments: true,
+
+				transition: 'convex', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
