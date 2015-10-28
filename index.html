@@ -90,7 +90,7 @@ WebGL as easy as composing React components.
 
 The same wrapper on top of **OpenGL** for React Native.
 
-write universal effects for both the Web and the Native.
+Write universal effects for both the Web and Native.
 </section>
 </section>
 
@@ -280,7 +280,7 @@ pipes **HelloGL** into **SquircleCrop**
 ![](./images/e0Pcz10.png)
 <!-- .element: height="250" -->
 
-if translated into JSX tree...
+if translated into a JSX tree...
 <!-- .element: class="fragment" -->
 
 ```html
@@ -300,7 +300,7 @@ if translated into JSX tree...
 
 
 > <!-- .element: class="fragment" --> The same way we moved from DOM to VDOM with `react`,
-We can move from boring WebGL setup code to a productive,
+We can move from tedious WebGL setup code to a productive,
 descriptive and functional abstraction,
 **without hiding the underneath technology**.
 
@@ -444,7 +444,7 @@ module.exports = GL.createComponent(
 <section data-markdown><script type="text/template">
 ### How to make Blur
 
-**Fast blur:** multiple passes of linear blur on different direction *(e.g XBlur + YBlur)*.
+**Fast blur:** multiple passes of linear blur in different direction *(e.g XBlur + YBlur)*.
 
 **one pass / linear blur:** mix texture lookups on one axis.
 *Can use interpolation by computing in a smaller size.*
@@ -742,7 +742,7 @@ You can programmatically generate a Texture in JavaScript to use in `gl-react`.
 ## gl-react-native
 
 iOS implementation uses **OpenGL ES**.
-a single shared OpenGL context is used for better performance.
+A single shared OpenGL context is used for better performance.
 
 To<!-- .element: class="fragment" -->
 factorize `gl-react` features,
@@ -755,7 +755,7 @@ most of the work is done in a shared library called `gl-react-core`.
 ![](images/advancedeffects.gif)
 <!-- .element: height="500" -->
 
-A crazy demo that runs at 60 FPS (tested on iPhone 6).
+A crazy demo that runs at 60 FPS.
 </script></section>
 
 <section data-markdown><script type="text/template">
