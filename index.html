@@ -43,10 +43,11 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 
-<section data-markdown>
-# Functional Rendering
-## in React
-</section>
+<section data-markdown><script type="text/template">
+## <!-- .element: class="fragment grow fade-out" data-fragment-index="0" --> **WebGL**
+## <!-- .element: class="fragment fade-in" data-fragment-index="0" style="margin: 1em 0" --> "Functional Rendering"
+## <!-- .element: class="fragment grow" data-fragment-index="0" --> **in React**
+</script></section>
 
 <section>
 <section data-markdown>
@@ -130,18 +131,18 @@ void main () {
  <!-- .element: class="fragment" height="300" -->
 </script></section>
 
-<section data-markdown>
+<section data-markdown><script type="text/template">
 ### The only limit of Functional Rendering is your imagination
 
 ## `{x,y} => {r,g,b,a}`
 
-This paradigm is low-level but extremely powerful:
-- **limitless** (not restricted to primitives)
-- **vectorial** by design (renders at any dimension)
-- **efficient** because scalable (with GPU units)
+This paradigm is low-level but extremely powerful: <!-- .element: class="fragment" -->
+- <!-- .element: class="fragment" --> **limitless** (not restricted to primitives)
+- <!-- .element: class="fragment" --> **vectorial** by design (renders at any dimension)
+- <!-- .element: class="fragment" --> **efficient** because scalable (with GPU units)
 
 > See [shadertoy.com](http://shadertoy.com/) and [glslsandbox.com](http://glslsandbox.com/) for more demos
-</section>
+</script></section>
 
 <section data-markdown><script type="text/template">
 ### "**Uniforms**" ...
@@ -252,7 +253,7 @@ if translated into a JSX tree...
 - **WebGL → Virtual GL**
 
 
-> <!-- .element: class="fragment" --> The same way we moved from DOM to VDOM with `react`,
+> <!-- .element: class="fragment" style="font-size:0.6em" --> The same way we moved from DOM to VDOM with `react`,
 We can move from tedious WebGL setup code to a productive,
 descriptive and functional abstraction,
 **without hiding the underneath technology**.
@@ -331,16 +332,16 @@ const HelloGL = GL.createComponent(
  uniforms={{ blue }}
  />);
 ```
-<!-- .element: class="fragment" -->
+<!-- .element: class="fragment" data-fragment-index="0" -->
 
 use it...
 ```html
 <HelloGL blue={0.5} />
 ```
-<!-- .element: class="fragment" -->
+<!-- .element: class="fragment" data-fragment-index="1" -->
 
 ![](./images/432492c6-475c-11e5-9328-f3d5187298c1.jpg)
- <!-- .element: class="fragment" height="200" -->
+ <!-- .element: class="fragment" height="200" data-fragment-index="1" -->
 </script></section>
 
 <section data-markdown><script type="text/template">
@@ -392,18 +393,23 @@ module.exports = GL.createComponent(
 
 <section>
 <section data-markdown>
-## Blur Example
+## How to make Blur ?
 </section>
 
 <section data-markdown><script type="text/template">
-### How to make Blur
+### efficient way
 
-**Fast blur:** multiple passes of linear blur in different direction *(e.g XBlur + YBlur)*.
+**Multiple passes of linear blurs in different direction**
 
-**one pass / linear blur:** mix texture lookups on one axis.
-*Can use interpolation by computing in a smaller size.*
+> Example: XBlur + YBlur
+
+Each pass mixes texture lookups on one axis.
 
 See [`glsl-fast-gaussian-blur`](https://github.com/Jam3/glsl-fast-gaussian-blur).
+
+> ProTip: computing on a smaller framebuffer brings more perfs and benefits from WebGL texture interpolation.
+
+<!-- .element: style="font-size: 0.6em" -->
 </script></section>
 
 <section data-markdown><script type="text/template">
@@ -500,6 +506,7 @@ function directionForPass (p, factor, total) {
   }
 }
 ```
+<!-- .element: class="fragment" -->
 </script></section>
 
 <section data-markdown><script type="text/template">
@@ -545,7 +552,7 @@ with a new **`map`** texture uniform.
 </script></section>
 
 <section data-markdown><script type="text/template">
-### Addition in the Shader
+### Addition in the Blur1D Shader
 
 ```glsl
 const shaders = GL.Shaders.create({
@@ -581,7 +588,7 @@ The Blur **`map`** can also be procedurally generated.
 
 ```html
 <BlurWithMap factor={4} passes={6} width={width} height={height}
-	map={<WeirdGradient />}>
+	map={   <WeirdGradient />   }>
   http://i.imgur.com/NjbLHx2.jpg
 </BlurWithMap>
 ```
