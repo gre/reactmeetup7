@@ -187,7 +187,7 @@ This paradigm is low-level but extremely powerful:
 - **vectorial** by design (renders at any dimension)
 - **efficient** because scalable (with GPU units)
 
-> See [shadertoy.com](http://shadertoy.com/) for more demos
+> See [shadertoy.com](http://shadertoy.com/) and [glslsandbox.com](http://glslsandbox.com/) for more demos
 </section>
 
 <section data-markdown><script type="text/template">
@@ -326,6 +326,8 @@ WebGL bindings for react to implement complex effects over content.
 - `GL.createComponent(props => glViewOrComp)`
 <!-- .element: class="fragment" -->
 
+***This is about all you need!***
+<!-- .element: class="fragment" -->
 </script></section>
 </section>
 
@@ -369,11 +371,10 @@ void main () {
 create a component...
 ```js
 const HelloGL = GL.createComponent(
- ({ width, height, blue }) =>
+ ({ blue, ...rest }) =>
  <GL.View
+ {...rest}
  shader={shaders.helloGL}
- width={width}
- height={height}
  uniforms={{ blue }}
  />);
 ```
@@ -701,8 +702,6 @@ algorithm factorizes it to **render it once**.
 
 > This optimization is not built-in in React because it wouldn't make sense for DOM,
 but in WebGL context, **factorizing 2 branchs of the tree saves extra rendering**.
-
-**WYSIWYG**
 </script></section>
 </section>
 
@@ -793,8 +792,10 @@ We can **rasterize native views to texture**.
 
 split `GL.View` into **`GL.Surface`** and **`GL.Node`**.
 
-- better **separation of concerns**, currently you are forced to put uniforms in the top level `GL.View`.
-- once React Native depends on React, we can make `gl-react` abstract so you can **write universal effects more easily**.
+- <!-- .element: class="fragment" --> better **separation of concerns**, currently you are forced to put uniforms in the top level `GL.View`.
+- <!-- .element: class="fragment" --> `gl-react` abstracted of any plateform-specific and allow to **write universal effects more easily**.
+
+> <!-- .element: class="fragment" --> **Status: Implemented**, but eagerly waiting [*React Native* to depends on *React*](https://github.com/facebook/react-native/issues/2985).
 </script></section>
 <section data-markdown><script type="text/template">
 ### [Android implementation](https://github.com/ProjectSeptemberInc/gl-react-native/issues/8)
@@ -802,29 +803,37 @@ split `GL.View` into **`GL.Surface`** and **`GL.Node`**.
 <section data-markdown><script type="text/template">
 ### Better tooling
 
-Currently working on **`gl-react-inspector`**.
+![](./images/inspector.png)
+<!-- .element: height="300" -->
+
+**`gl-react-inspector`**: Work in Progress
+
+- <!-- .element: class="fragment" --> How to actually make it a plugin for React Devtools?
+- <!-- .element: class="fragment" --> Implement support for React Native
 </script></section>
 <section data-markdown><script type="text/template">
 ### More features
 
-see issues created on:
+see issues created on Github:
 
-- [github:ProjectSeptemberInc/gl-react](https://github.com/ProjectSeptemberInc/gl-react)
-- [github:ProjectSeptemberInc/gl-react-native](https://github.com/ProjectSeptemberInc/gl-react-native)
+- [ProjectSeptemberInc/gl-react](https://github.com/ProjectSeptemberInc/gl-react)
+- [ProjectSeptemberInc/gl-react-native](https://github.com/ProjectSeptemberInc/gl-react-native)
 </script></section>
 <section data-markdown><script type="text/template">
-### More Advanced usages ?
+### More Open Subjects
 
-We focused on 2D effects with hardcoded *Vertex Shader*.
+We<!-- .element: class="fragment" --> focused on 2D effects with hardcoded *Vertex Shader*.
 
-We can try to be more generic, but this involves a bit of work especially for the React Native implementation.
+We<!-- .element: class="fragment" --> can try to be more generic, but this involves a bit of work especially for the React Native implementation.
 
-For more advanced use-cases like 3D models, we recommend to directly use the OpenGL / WebGL API.
+For<!-- .element: class="fragment" --> more advanced use-cases like 3D models, we recommend to directly use the OpenGL / WebGL API.
 </script></section>
 </section>
 
 <section data-markdown><script type="text/template">
 ## [DEMOS](http://projectseptemberinc.github.io/gl-react/)
+
+![](./images/demos.png)
 </script></section>
 
 <section data-markdown><script type="text/template">
