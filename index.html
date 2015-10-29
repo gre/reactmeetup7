@@ -50,53 +50,6 @@
 
 <section>
 <section data-markdown>
-# Summary
-</section>
-<section data-markdown>
-## WebGL API
-### hybrid paradigms
-
-WebGL is a very low level **imperative** API...
-but fundamentally uses **functional** bricks.
-</section>
-<section data-markdown>
-## fragment shader
-
-How to draw things in WebGL.
-
-### *"Functional Rendering"*
-</section>
-<section data-markdown><script type="text/template">
-### gl-react
-
-**a wrapper that hides WebGL complexity.**
-
-like how React hides the stateful imperative DOM API
-
-**Our current focus: making (2D) effects.**
-
-```html
-<Blur>
-  <NegativeColor>
-    <video ... />
-  </NegativeColor>
-</Blur>
-```
-
-WebGL as easy as composing React components.
-</script></section>
-<section data-markdown>
-### gl-react-native
-
-The same wrapper on top of **OpenGL** for React Native.
-
-Write universal effects for both the Web and Native.
-</section>
-</section>
-
-
-<section>
-<section data-markdown>
 # WebGL
 </section>
 
@@ -116,13 +69,13 @@ we can focus on 2D effects with 2 triangles that fits viewport
 </section>
 
 <section>
-<section data-markdown>
+<section data-markdown><script type="text/template">
 Let's take a complex WebGL example...
 
 ## [behind-asteroids](https://github.com/gre/behind-asteroids)
 
-a game I've made for JS13K
-</section>
+![](./images/ufo.png)<!-- .element: style="height:450px" --> ![](./images/player24.png)<!-- .element: style="height:450px" -->
+</script></section>
 
 <section data-markdown>
 WebGL API is about building a graphics pipeline...
@@ -840,12 +793,64 @@ For<!-- .element: class="fragment" --> more advanced use-cases like 3D models, w
 ## [`gl-react-inspector` experiments](http://greweb.me/gl-react-inspector-examples/)
 </script></section>
 
+<section>
+<section data-markdown>
+# Wrap Up
+</section>
+<section data-markdown>
+## WebGL API
+### hybrid paradigms
+
+WebGL is a very low level **imperative** API...
+but fundamentally uses **functional** bricks.
+</section>
+<section data-markdown>
+## fragment shader
+
+How to draw things in WebGL:
+
+### `{x,y} => {r,g,b,a}`
+
+### *"Functional Rendering"*
+</section>
+<section data-markdown><script type="text/template">
+### gl-react
+
+**a wrapper that hides WebGL complexity.**
+
+like how React hides the stateful imperative DOM API
+
+```html
+<Blur>
+  <NegativeColor>
+    <video ... />
+  </NegativeColor>
+</Blur>
+```
+
+> WebGL as easy as composing React components.
+<!-- .element: style="font-size: 0.6em" -->
+
+**Our current focus: making (2D) effects.**
+</script></section>
+<section data-markdown>
+### gl-react-native
+
+The same wrapper on top of **OpenGL** for React Native.
+
+Write universal effects for both the Web and Native.
+</section>
+</section>
+
 <section data-markdown><script type="text/template">
 ## [@greweb](https://twitter.com/greweb)
 
 # THA ![](./images/92oymNde_400x400.jpg)<!-- .element: style="height:300px; vertical-align: middle" --> NKS
 
-working at [Project September](https://twitter.com/ProjSeptEng)
+working at [Project September](https://twitter.com/ProjSeptEng).
+
+http://greweb.me/reactmeetup7
+<!-- .element: style="font-size: 0.6em; margin-top: 5em; color: #000; display: block" -->
 </script></section>
 
 
